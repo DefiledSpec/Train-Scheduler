@@ -30,7 +30,14 @@ function addTrain(e) {
     trainInfo.push().set(newTrain);
 }
 
-
+setInterval(function() {
+    trainInfo.once('value', snap => {
+        console.log('updating', snap.val())
+        if(snap.val()) {
+            display(snap.val())
+        }
+    })
+}, 15000)
 
 
 
@@ -58,6 +65,8 @@ function display(data) {
             .append($('<td>').text(frequency || 'null'))
             .append($('<td>').text(moment(arrival).format('llll')))
             .append($('<td>').text(minsTill || 'null'))
+            .append($('<td>').append($('<button>').addClass('edit btn btn-sm btn-warning center').text('Edit').attr({id: key})))
+            .append($('<td>').append($('<button>').addClass('del btn btn-sm btn-danger center').text('X').attr({id: key})))
         table.append(row);
     }
     for (let key in data) {
@@ -73,6 +82,12 @@ function display(data) {
     }
 }
 
+$(document).on('click', '.del', function(e) {
+    e.preventDefault();
+    console.log('hello')
+    let key = $(this).attr('id');
+    trainInfo.child(key).set({})
+})
 
 
 
@@ -81,10 +96,10 @@ function display(data) {
 function setArrival(time, freq) {
     let now = moment(); //current time
     let arrival = time.add(freq, 'minutes'); //add train freq time to init time
-    while(now.diff(arrival) >= 0) { //adds the freq to the arrival var until the time is > now
+    while(now.diff(arrival, 'minutes') > 0) { //adds the freq to the arrival var until the time is > now
         arrival.add(freq, 'minutes');
     }
-    return arrival.subtract(freq, 'minutes');
+    return arrival
 }
 
 
