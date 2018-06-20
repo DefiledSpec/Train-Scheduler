@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+* {
+    font-family: 'Raleway', sans-serif;
+}
+input.form-control {
+    margin-bottom: 1em;
+}
+form.form-control {
+    border: none;
+}
+
+#wrapper {
+    max-width: 960px;
+}
