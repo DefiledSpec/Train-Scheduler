@@ -11,17 +11,28 @@ const trainInfo = firebase.database().ref('trainInfo');
 // key.set({name: 'asdfklj'})
 // let anotherKey = trainInfo.push();
 // anotherKey.set({name:'assdfssd'}
+// function display/
 
 function addTrain(e) {
     e.preventDefault();
-    let time = moment().set({hour: $('#hours').val(), minute: $('#mins').val()});
+    let time = moment().set({hour: $('#hours').val(), minute: $('#mins').val()}).subtract(1, 'years');
     let frequency = $('#trainFrequency').val().trim();
     let arrival = setArrival(time, frequency);
     let next = arrival.fromNow(true);
-    
+    let destination = $('#trainDestination').val().trim();
+
+    console.log(time.isEmpty(), frequency.isEmpty(), arrival.isEmpty(), destination.isEmpty())
+
+
+    if(time.isEmpty() || frequency.isEmpty() || arrival.isEmpty() || destination.isEmpty()) {
+        $('#input-error').text('You must fill in all the required fields')
+        return console.log('you must fill in the required fields')
+    }
+    console.log('made it here')
+
     const newTrain = {
         name: $('#trainName').val().trim(),
-        destination: $('#trainDestination').val().trim(),
+        destination,
         firstTime: time.toString(),
         frequency: frequency,
         arrival: arrival.toString(),
@@ -29,7 +40,9 @@ function addTrain(e) {
     }
     trainInfo.push().set(newTrain);
 }
-
+function isEmpty(str) {
+    return !str.replace(/^\s+/g, '').length; //bool ('true' if empty)
+}
 setInterval(function() {
     trainInfo.once('value', snap => {
         console.log('updating', snap.val())
@@ -37,13 +50,9 @@ setInterval(function() {
             display(snap.val())
         }
     })
-}, 15000)
+}, 60000) //updates mins Away &&/|| next arrival
 
-
-
-
-
-$('#submit').on('click', addTrain);
+$('#submit').on('submit', addTrain);
 
 
 trainInfo.on('value', snap => {
@@ -59,7 +68,7 @@ function display(data) {
     table.empty();
     for (let key in data) {
         let row = $('<tr>').attr({id: key}).addClass('bg-dark')
-        const {name, destination, frequency, arrival, firstTime, minsTill} = data[key];
+        const {name, destination, frequency, arrival, minsTill} = data[key];
         row .append($('<td>').text(name) || 'null')
             .append($('<td>').text(destination || 'null'))
             .append($('<td>').text(frequency || 'null'))
@@ -84,14 +93,10 @@ function display(data) {
 
 $(document).on('click', '.del', function(e) {
     e.preventDefault();
-    console.log('hello')
+    // console.log('hello')
     let key = $(this).attr('id');
     trainInfo.child(key).set({})
 })
-
-
-
-
 
 function setArrival(time, freq) {
     let now = moment(); //current time
@@ -101,6 +106,3 @@ function setArrival(time, freq) {
     }
     return arrival
 }
-
-
-
