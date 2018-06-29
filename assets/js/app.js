@@ -74,7 +74,7 @@ function display(data) {
             .append($('<td>').text(frequency || 'null'))
             .append($('<td>').text(moment(arrival).format('llll')))
             .append($('<td>').text(minsTill || 'null'))
-            .append($('<td>').append($('<button>').addClass('edit btn btn-sm btn-warning center').text('Edit').attr({id: key})))
+            //.append($('<td>').append($('<button>').addClass('edit btn btn-sm btn-warning center').text('Edit').attr({id: key})))
             .append($('<td>').append($('<button>').addClass('del btn btn-sm btn-danger center').text('X').attr({id: key})))
         table.append(row);
     }
